@@ -6,14 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 
-include(FetchContent)
-
-FetchContent_Declare(
-    TwitchQt
-    GIT_REPOSITORY "https://github.com/g-fb/TwitchQt"
-    GIT_TAG "master"
-    )
-FetchContent_MakeAvailable(TwitchQt)
+add_subdirectory(o2)
 
 qt_standard_project_setup()
 
@@ -27,6 +20,7 @@ qt_add_qml_module(appstreamlights
     QML_FILES
         Main.qml
         SOURCES wizcontroller.h wizcontroller.cpp
+        SOURCES o2twitch.h o2twitch.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -40,13 +34,13 @@ set_target_properties(appstreamlights PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-add_dependencies(appstreamlights TwitchQt)
+add_dependencies(appstreamlights o2)
 
 target_link_libraries(appstreamlights
-    PRIVATE Qt6::Quick TwitchQt
+    PRIVATE Qt6::Quick o2
 )
 
-target_include_directories(appstreamlights PRIVATE ${TwitchQt_BINARY_DIR}/src)
+target_include_directories(appstreamlights PRIVATE ${o2_BINARY_DIR}/src ${o2_SOURCE_DIR}/src)
 
 include(GNUInstallDirs)
 install(TARGETS appstreamlights

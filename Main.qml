@@ -12,25 +12,46 @@ Window {
         id: socket
         url: "wss://eventsub.wss.twitch.tv/ws"
         onTextMessageReceived: function(message) {
-            console.log("\nReceived message: " + message)
+            console.log("Received message: " + message);
+            let data = JSON.parse(message);
+            if (data.metadata.message_type === "session_welcome") {
+                controller.registerSession(data.payload.session.id);
+            } else if (data.metadata.message_type === "notification") {
+                if (data.payload.event.title === controller.getRewardMessage()) {
+                    console.log("Change color to: ", data.payload.event.prompt);
+                    controller.changeColor(data.payload.event.prompt)
+                }
+            }
         }
         onStatusChanged: if (socket.status == WebSocket.Error) {
                              console.log("Error: " + socket.errorString)
                          } else if (socket.status == WebSocket.Open) {
-                             // socket.sendTextMessage("Hello World")
+                             console.log("Socket open")
                          } else if (socket.status == WebSocket.Closed) {
-                             console.log("\nSocket closed")
+                             console.log("Socket closed")
                          }
-        active: true
+        active: controller.linked
     }
 
     Component.onCompleted: {
         controller.detectLights()
     }
 
+    Connections {
+        target: controller
+        function onOpenBrowser(url) {
+            console.log(url);
+            Qt.openUrlExternally(url);
+        }
+        function onConnectSocket() {
+            socket.active = true;
+        }
+    }
+
     Column {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        spacing: 20
 
         Label {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -39,6 +60,7 @@ Window {
         }
 
         Button {
+            width: 150
             anchors.horizontalCenter: parent.horizontalCenter
             text: "Discover bulbs"
             onClicked: controller.detectLights()
@@ -54,17 +76,10 @@ Window {
             }
         }
 
-        Label {
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Color:"
-            color: "black"
-        }
-
-        TextInput {
-            anchors.horizontalCenter: parent.horizontalCenter
-            onEditingFinished: controller.changeColor(text)
-            text: "black"
-            width: 100
+        Button {
+            width: 150
+            text: controller.linked ? "Logout from twitch" : "Login to twitch"
+            onClicked: controller.linked ? controller.unlink() : controller.link()
         }
     }
 }
