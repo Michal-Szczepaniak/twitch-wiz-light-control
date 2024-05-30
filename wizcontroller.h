@@ -26,9 +26,10 @@ public:
     explicit WIZController(QObject *parent = nullptr);
 
     Q_INVOKABLE void detectLights();
-    Q_INVOKABLE void changeColor(QString inputColor);
+    Q_INVOKABLE void changeColor(QString inputColor, bool force = false);
     Q_INVOKABLE void registerSession(QString sessionId);
     Q_INVOKABLE QString getRewardMessage();
+    Q_INVOKABLE void startRainbow();
     QStringList getBulbs() const;
     bool isLinked();
 
@@ -48,6 +49,7 @@ public slots:
     void onOpenBrowser(QUrl url);
     void onCloseBrowser();
     void onRequestFinished(int requestId, QNetworkReply::NetworkError error, QByteArray replyData);
+    void onRainbowTimerTimeout();
 
 private:
     void getSubscriptionsRequest();
@@ -70,6 +72,9 @@ private:
     QStringList _subscriptionsToDelete;
     QString _currentSessionId = "";
     QSettings _settings;
+    int _subscriptionsCount = 0;
+    QTimer _rainbowTimer;
+    int _rainbowCounter = 0;
 };
 
 #endif // WIZCONTROLLER_H

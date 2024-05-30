@@ -17,9 +17,28 @@ Window {
             if (data.metadata.message_type === "session_welcome") {
                 controller.registerSession(data.payload.session.id);
             } else if (data.metadata.message_type === "notification") {
-                if (data.payload.event.title === controller.getRewardMessage()) {
-                    console.log("Change color to: ", data.payload.event.prompt);
-                    controller.changeColor(data.payload.event.prompt)
+                if (data.metadata.subscription_type === "channel.channel_points_custom_reward_redemption.add" &&
+                        data.payload.event.reward.title === controller.getRewardMessage()) {
+                    console.log("Change color to: ", data.payload.event.user_input);
+                    controller.changeColor(data.payload.event.user_input)
+                } else if (data.metadata.subscription_type === "channel.raid") {
+                    console.log("rainbow letsgo");
+                    controller.startRainbow();
+                } else if (data.metadata.subscription_type === "channel.cheer") {
+                    console.log("rainbow letsgo");
+                    controller.startRainbow();
+                } else if (data.metadata.subscription_type === "channel.subscription.message") {
+                    console.log("rainbow letsgo");
+                    controller.startRainbow();
+                } else if (data.metadata.subscription_type === "channel.subscription.gift") {
+                    console.log("rainbow letsgo");
+                    controller.startRainbow();
+                } else if (data.metadata.subscription_type === "channel.subscribe") {
+                    console.log("rainbow letsgo");
+                    controller.startRainbow();
+                } else if (data.metadata.subscription_type === "channel.follow") {
+                    console.log("rainbow letsgo");
+                    controller.startRainbow();
                 }
             }
         }
