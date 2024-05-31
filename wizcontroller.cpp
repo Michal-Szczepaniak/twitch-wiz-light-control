@@ -248,7 +248,7 @@ void WIZController::addSubscriptionsRequest()
     case 1:
         obj["type"] = "channel.raid";
         obj["version"] = "1";
-        condition["from_broadcaster_user_id"] = _broadcasterId;
+        condition["to_broadcaster_user_id"] = _broadcasterId;
         break;
     case 2:
         obj["type"] = "channel.cheer";
